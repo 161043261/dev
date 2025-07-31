@@ -118,13 +118,31 @@ export default defineComponent(() => {
     githubUsername.value = localStorage.getItem('githubUsername') ?? githubUsername.value
     personalInfo.value = localStorage.getItem('personalInfo') ?? personalInfo.value
     targetJob.value = localStorage.getItem('intendedJob') ?? targetJob.value
-    eduExperienceList.value = JSON.parse(localStorage.getItem('eduExperienceList') ?? '[]')
-    skillList.value = JSON.parse(localStorage.getItem('skillList') ?? '[]')
-    jobExperienceList.value = JSON.parse(localStorage.getItem('jobExperienceList') ?? '[]')
-    projectExperienceList.value = JSON.parse(localStorage.getItem('projectExperienceList') ?? '[]')
-    researchExperienceList.value = JSON.parse(
-      localStorage.getItem('researchExperienceList') ?? '[]',
-    )
+
+    const cacheEduExperienceList = localStorage.getItem('eduExperienceList')
+    if (cacheEduExperienceList) {
+      eduExperienceList.value = JSON.parse(cacheEduExperienceList)
+    }
+
+    const cacheSkillList = localStorage.getItem('skillList')
+    if (cacheSkillList) {
+      skillList.value = JSON.parse(cacheSkillList)
+    }
+
+    const cacheJobExperienceList = localStorage.getItem('jobExperienceList')
+    if (cacheJobExperienceList) {
+      jobExperienceList.value = JSON.parse(cacheJobExperienceList)
+    }
+
+    const cacheProjectExperienceList = localStorage.getItem('projectExperienceList')
+    if (cacheProjectExperienceList) {
+      projectExperienceList.value = JSON.parse(cacheProjectExperienceList)
+    }
+
+    const cacheResearchExperienceList = localStorage.getItem('researchExperienceList')
+    if (cacheResearchExperienceList) {
+      researchExperienceList.value = JSON.parse(cacheResearchExperienceList)
+    }
   })
 
   return () => (
