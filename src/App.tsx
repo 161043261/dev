@@ -14,9 +14,9 @@ export default defineComponent(() => {
     dev.value = !dev.value
 
     if (dev.value) {
-      toast.show('development mode')
+      toast.show('Updating')
     } else {
-      toast.show('production mode')
+      toast.show('Saved')
     }
   }
 

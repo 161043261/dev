@@ -16,10 +16,10 @@
   }
 
   textarea {
-    @apply h-8 resize-none overflow-hidden focus:outline-none;
+    @apply h-8 resize-y border-b-1 border-(--color-theme) focus:outline-none;
   }
 
   button {
-    @apply rounded border-1 border-(--color-theme) hover:cursor-pointer hover:bg-(--color-theme-light);
+    @apply h-8 rounded border-1 border-(--color-theme) hover:cursor-pointer hover:bg-(--color-theme-light);
   }
 }
