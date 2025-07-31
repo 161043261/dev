@@ -2,6 +2,13 @@
 
 :root {
   font-family:
-    'Iosevka', 'Cascadia Code', 'Menlo', 'LXGW Wenkai', 'Sarasa Gothic SC', 'Microsoft YaHei',
-    'PingFang SC';
+    'Iosevka', 'Maple Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Sarasa Gothic SC',
+    'Microsoft YaHei', 'PingFang SC';
+
+  --color-theme: #4a90e2;
+  --color-theme-light: #c4d9ff;
+
+  input {
+    @apply border-1 border-(--color-theme) rounded p-1;
+  }
 }

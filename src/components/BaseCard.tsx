@@ -1,7 +1,7 @@
-import { defineComponent, toRefs, type Ref } from 'vue'
+import { defineComponent, toRefs, type VNode } from 'vue'
 
 interface IProps {
-  header: string | Ref<string>
+  header: string | VNode
 }
 
 export default defineComponent({
@@ -9,9 +9,9 @@ export default defineComponent({
   setup(props: IProps, { slots } /** ctx */) {
     const { header } = toRefs(props)
     return () => (
-      <div class="mx-auto mt-[20px] w-[800px] rounded-3xl">
-        <div class="text-[20px] font-bold">{header.value}</div>
-        <hr class="my-[10px]" />
+      <div class="mx-auto mt-2 w-[80vw]">
+        <div class="font-bold">{header.value}</div>
+        <hr class="my-2" />
         <div>{slots.default ? slots.default() : <></>}</div>
       </div>
     )
