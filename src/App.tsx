@@ -1,31 +1,48 @@
 import { Github, Iphone, Mail } from '@icon-park/vue-next'
-import { computed, defineComponent, reactive, ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import BaseCard from './components/BaseCard'
 import ListCard from './components/ListCard'
+import type { IToast } from './funcs/create-toast'
 
-// 支持 v-show, v-model
 export default defineComponent(() => {
-  const dev = ref<boolean>(true)
+  const dev = ref<boolean>(false)
+
+  const toast = inject('toast') as IToast
+
   const handleClick = (ev: MouseEvent) => {
     ev.preventDefault()
     dev.value = !dev.value
+
+    if (dev.value) {
+      toast.show('development mode')
+    } else {
+      toast.show('production mode')
+    }
   }
+
   // ========== headers ==========
   const headers = reactive<
     [
       personalInfo: string, // 0. personalInfo 个人信息
       intendedJob: string, // 1. intendedJob 意向工作
       eduExperience: string, // 2. eduExperience 教育经历
-      skillList: string, // 3. skillList 技能清单
+      skillList: string, // 3. skillList 技能
       jobExperience: string, // 4. jobExperience 实习/工作经历
       projectExperience: string, // 5. projectExperience 项目经历
       researchExperience: string, // 6. researchExperience 科研经历
     ]
-  >(['个人信息', '职业意向', '教育经历', '技能清单', '实习经历', '项目经历', '科研经历'])
+  >(['个人信息', '意向工作', '教育经历', '技能', '实习经历', '项目经历', '科研经历'])
 
   // ========== theme ==========
-  const themeColor = ref('#4a90e2')
-  // const themeLightColor = ref('#c4d9ff')
+  const primaryThemeColor = ref('#478fe1')
 
   // ========== state ==========
   const name = ref('你的名字 (右键以编辑)')
@@ -39,7 +56,8 @@ export default defineComponent(() => {
   const personalInfo = ref('男, 2002')
   const targetJob = ref('前端实习 Vue3/React')
   const targetAddress = ref('上海')
-  const eduExperienceList = reactive<[timeRange: string, university: string, major: string][]>([
+  const eduExperienceList = ref<[timeRange: string, university: string, major: string][]>([
+    ['高中: 2016-2019', '安徽省南陵中学', '理科'],
     ['本科: 2019-2023', '西安电子科技大学', '微电子科学与工程'],
     ['硕士: 2024 至今', '南京邮电大学', '计算机技术'],
   ])
@@ -48,7 +66,7 @@ export default defineComponent(() => {
     '',
     '',
   ])
-  const skillList = reactive<string[]>([
+  const skillList = ref<string[]>([
     '熟悉 CSS, CSS 预处理器, CSS 后处理器, CSS 原子化, CSS 模块化',
     '熟悉 JS/TS, 熟悉 Node.js, 了解 monorepo',
     '熟悉 Express.js, Nest.js, 有前端 bff 层开发经验',
@@ -60,23 +78,23 @@ export default defineComponent(() => {
     '熟悉打包产物分析, Web 性能指标, 了解打包产物体积优化, Web 性能优化',
   ])
 
-  const jobExperienceListList = reactive<string[]>([])
-  const projectExperienceList = reactive<string[]>([])
-  const researchExperienceList = reactive<string[]>([])
+  const jobExperienceList = ref<string[]>([])
+  const projectExperienceList = ref<string[]>([])
+  const researchExperienceList = ref<string[]>([])
 
   const addNewEduExperience = () => {
-    eduExperienceList.push(newEduExperience)
+    eduExperienceList.value.push(newEduExperience)
     newEduExperience[0] = ''
     newEduExperience[1] = ''
     newEduExperience[2] = ''
   }
 
   const removeEduExperience = (idx: number) => {
-    eduExperienceList.splice(idx, 1)
+    eduExperienceList.value.splice(idx, 1)
   }
 
   const clearEduExperience = (idx: number) => {
-    eduExperienceList[idx] = ['', '', '']
+    eduExperienceList.value[idx] = ['', '', '']
   }
 
   const clearNewEduExperience = () => {
@@ -85,8 +103,40 @@ export default defineComponent(() => {
     newEduExperience[2] = ''
   }
 
+  watch(dev, (newVal) => {
+    if (!newVal /** dev.value == false */) {
+      localStorage.setItem('name', name.value)
+      localStorage.setItem('phoneNumber', phoneNumber.value)
+      localStorage.setItem('email', email.value)
+      localStorage.setItem('githubUsername', githubUsername.value)
+      localStorage.setItem('personalInfo', personalInfo.value)
+      localStorage.setItem('intendedJob', targetJob.value)
+      localStorage.setItem('eduExperienceList', JSON.stringify(eduExperienceList.value))
+      localStorage.setItem('skillList', JSON.stringify(skillList.value))
+      localStorage.setItem('jobExperienceList', JSON.stringify(jobExperienceList.value))
+      localStorage.setItem('projectExperienceList', JSON.stringify(projectExperienceList.value))
+      localStorage.setItem('researchExperienceList', JSON.stringify(researchExperienceList.value))
+    }
+  })
+
+  onMounted(() => {
+    name.value = localStorage.getItem('name') ?? name.value
+    phoneNumber.value = localStorage.getItem('phoneNumber') ?? phoneNumber.value
+    email.value = localStorage.getItem('email') ?? email.value
+    githubUsername.value = localStorage.getItem('githubUsername') ?? githubUsername.value
+    personalInfo.value = localStorage.getItem('personalInfo') ?? personalInfo.value
+    targetJob.value = localStorage.getItem('intendedJob') ?? targetJob.value
+    eduExperienceList.value = JSON.parse(localStorage.getItem('eduExperienceList') ?? '[]')
+    skillList.value = JSON.parse(localStorage.getItem('skillList') ?? '[]')
+    jobExperienceList.value = JSON.parse(localStorage.getItem('jobExperienceList') ?? '[]')
+    projectExperienceList.value = JSON.parse(localStorage.getItem('projectExperienceList') ?? '[]')
+    researchExperienceList.value = JSON.parse(
+      localStorage.getItem('researchExperienceList') ?? '[]',
+    )
+  })
+
   return () => (
-    <div>
+    <>
       <div class="flex flex-col items-center">
         <h1
           class="mt-2 cursor-pointer text-lg"
@@ -97,7 +147,7 @@ export default defineComponent(() => {
         </h1>
 
         <div class="my-2 flex items-center gap-2">
-          <Iphone theme="outline" size="24" fill={themeColor.value} strokeWidth={3} />
+          <Iphone theme="outline" size="24" fill={primaryThemeColor.value} strokeWidth={3} />
           {dev.value ? (
             <input v-model={phoneNumber.value} placeholder="手机号" />
           ) : (
@@ -106,7 +156,7 @@ export default defineComponent(() => {
             </a>
           )}
 
-          <Mail theme="outline" size="24" fill={themeColor.value} strokeWidth={3} />
+          <Mail theme="outline" size="24" fill={primaryThemeColor.value} strokeWidth={3} />
           {dev.value ? (
             <input v-model={email.value} placeholder="邮箱" />
           ) : (
@@ -115,7 +165,7 @@ export default defineComponent(() => {
             </a>
           )}
 
-          <Github theme="outline" size="24" fill={themeColor.value} strokeWidth={3} />
+          <Github theme="outline" size="24" fill={primaryThemeColor.value} strokeWidth={3} />
           {dev.value ? (
             <input v-model={githubUsername.value} placeholder="GitHub 用户名" />
           ) : (
@@ -146,16 +196,16 @@ export default defineComponent(() => {
         header={dev.value ? <input v-model={headers[1]} placeholder={headers[1]} /> : headers[1]}
       >
         <ul class="ml-5 list-disc">
-          <li>
-            目标工作
+          <li class="flex gap-2">
+            <div>目标工作:</div>
             {dev.value ? (
               <input v-model={targetJob.value} placeholder="目标工作" />
             ) : (
               targetJob.value
             )}
           </li>
-          <li>
-            目标地点
+          <li class="flex gap-2">
+            <div>目标地点:</div>
             {dev.value ? (
               <input v-model={targetAddress.value} placeholder="目标地点" />
             ) : (
@@ -171,33 +221,40 @@ export default defineComponent(() => {
       >
         {dev.value ? (
           <>
-            <ul>
-              {eduExperienceList.map((item, idx) => (
-                <li class="grid grid-cols-4" key={idx}>
-                  <input v-model={item[0]} placeholder="时间范围" />
-                  <input v-model={item[1]} placeholder="大学" />
-                  <input v-model={item[2]} placeholder="专业" />
-                  <div class="flex justify-center gap-5">
-                    <button onClick={() => removeEduExperience(idx)}>删除</button>
-                    <button onClick={() => clearEduExperience(idx)}>清空</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
             <div class="grid grid-cols-4">
               <input v-model={newEduExperience[0]} placeholder="时间范围" />
               <input v-model={newEduExperience[1]} placeholder="大学" />
               <input v-model={newEduExperience[2]} placeholder="专业" />
               <div class="flex justify-center gap-5">
-                <button onClick={() => addNewEduExperience()}>添加</button>
-                <button onClick={() => clearNewEduExperience()}>清空</button>
+                <button onClick={() => addNewEduExperience()} class="w-15">
+                  add
+                </button>
+                <button onClick={() => clearNewEduExperience()} class="w-15">
+                  clear
+                </button>
               </div>
             </div>
+            <ul>
+              {eduExperienceList.value.map((item, idx) => (
+                <li class="grid grid-cols-4" key={idx}>
+                  <input v-model={item[0]} placeholder="时间范围" />
+                  <input v-model={item[1]} placeholder="大学" />
+                  <input v-model={item[2]} placeholder="专业" />
+                  <div class="flex justify-center gap-5">
+                    <button onClick={() => removeEduExperience(idx)} class="w-15">
+                      remove
+                    </button>
+                    <button onClick={() => clearEduExperience(idx)} class="w-15">
+                      clear
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </>
         ) : (
           <ul>
-            {eduExperienceList.map(([timeRange, university, major]) => (
+            {eduExperienceList.value.map(([timeRange, university, major]) => (
               <li class="grid grid-cols-3">
                 <div>{timeRange}</div>
                 <div>{university}</div>
@@ -208,33 +265,33 @@ export default defineComponent(() => {
         )}
       </BaseCard>
 
-      {/* 3. skillList 技能清单 */}
+      {/* 3. skillList 技能 */}
       <ListCard
         header={dev.value ? <input v-model={headers[3]} placeholder={headers[3]} /> : headers[3]}
-        itemList={skillList}
+        itemList={skillList.value}
         dev={dev.value}
       />
 
       {/* 4. jobExperience 实习/工作经历 */}
       <ListCard
         header={dev.value ? <input v-model={headers[4]} placeholder={headers[4]} /> : headers[4]}
-        itemList={jobExperienceListList}
+        itemList={jobExperienceList.value}
         dev={dev.value}
       />
 
       {/* 5. projectExperience 项目经历 */}
       <ListCard
         header={dev.value ? <input v-model={headers[5]} placeholder={headers[5]} /> : headers[5]}
-        itemList={projectExperienceList}
+        itemList={projectExperienceList.value}
         dev={dev.value}
       />
 
       {/* 6. researchExperience 科研经历 */}
       <ListCard
         header={dev.value ? <input v-model={headers[6]} placeholder={headers[6]} /> : headers[6]}
-        itemList={researchExperienceList}
+        itemList={researchExperienceList.value}
         dev={dev.value}
       />
-    </div>
+    </>
   )
 })

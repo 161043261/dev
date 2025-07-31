@@ -5,10 +5,21 @@
     'Iosevka', 'Maple Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Sarasa Gothic SC',
     'Microsoft YaHei', 'PingFang SC';
 
-  --color-theme: #4a90e2;
-  --color-theme-light: #c4d9ff;
+  --color-theme: #478fe1;
+  /* --color-theme: #00bd7e; */
+  --color-theme-light: #478fe180;
+  /* --color-theme-light: #00bd7e80; */
 
-  input {
-    @apply border-1 border-(--color-theme) rounded p-1;
+  input,
+  textarea {
+    @apply h-8 border-b-1 border-(--color-theme) focus:outline-none;
+  }
+
+  textarea {
+    @apply h-8 resize-none overflow-hidden focus:outline-none;
+  }
+
+  button {
+    @apply rounded border-1 border-(--color-theme) hover:cursor-pointer hover:bg-(--color-theme-light);
   }
 }

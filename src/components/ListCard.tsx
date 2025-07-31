@@ -10,7 +10,8 @@ interface IProps {
 }
 
 export default defineComponent({
-  props: ['dev', 'header', 'itemList'],
+  props: ['dev', 'header', 'placeholder', 'itemList'],
+
   setup(props: IProps) {
     const { dev, header, itemList } = toRefs(props)
 
@@ -23,24 +24,33 @@ export default defineComponent({
       newItem.value = ''
     }
 
+    const handleChange = (ev: Event, idx: number) => {
+      itemList.value[idx] = (ev.target as HTMLInputElement)?.value
+    }
+
     return () => (
       <BaseCard header={header.value}>
         {dev.value ? (
           <ul class="ml-5 list-disc">
+            <li class="flex gap-5">
+              <textarea class="flex-7/8" v-model={newItem.value} placeholder="newItem" />
+              <button class="flex-1/16" onClick={() => addNewItem()}>
+                add
+              </button>
+            </li>
             {itemList.value.map((item, idx) => (
-              <li key={idx} class="flex">
-                <input class="flex-7/8" v-model={item} placeholder="技能" />
-                <button class="flex-1/8" onClick={() => removeItem(idx)}>
-                  删除
+              <li key={idx} class="flex gap-5">
+                <textarea
+                  class="flex-7/8"
+                  v-model={item}
+                  placeholder="技能"
+                  onInput={(ev) => handleChange(ev, idx)}
+                />
+                <button class="flex-1/16" onClick={() => removeItem(idx)}>
+                  remove
                 </button>
               </li>
             ))}
-            <li class="flex">
-              <input class="flex-7/8" v-model={newItem.value} placeholder="技能" />
-              <button class="flex-1/8" onClick={() => addNewItem()}>
-                添加
-              </button>
-            </li>
           </ul>
         ) : (
           <ul class="ml-5 list-disc">
