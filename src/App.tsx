@@ -24,14 +24,14 @@ export default defineComponent(() => {
   const headers = reactive<
     [
       personalInfo: string, // 0. personalInfo 个人信息
-      intendedJob: string, // 1. intendedJob 意向工作
+      intendedJob: string, // 1. intendedJob 期望工作
       eduExperience: string, // 2. eduExperience 教育经历
       skillList: string, // 3. skillList 技能
       jobExperience: string, // 4. jobExperience 实习/工作经历
       projectExperience: string, // 5. projectExperience 项目经历
       researchExperience: string, // 6. researchExperience 科研经历
     ]
-  >(['个人信息', '意向工作', '教育经历', '技能', '实习经历', '项目经历', '科研经历'])
+  >(['个人信息', '期望工作', '教育经历', '技能', '实习经历', '项目经历', '科研经历'])
 
   // ========== theme ==========
   const primaryThemeColor = ref('#478fe1')
@@ -62,8 +62,8 @@ export default defineComponent(() => {
     '熟悉 CSS, CSS 预处理器, CSS 后处理器, CSS 原子化, CSS 模块化',
     '熟悉 JS/TS, 熟悉 Node.js, 了解 monorepo',
     '熟悉 Express.js, Nest.js, 有前端 bff 层开发经验',
-    '熟悉 Vue3, Pinia, vue-router, 熟悉响应式原理',
-    '熟悉 React, Zustand, react-router, 了解 Fiber 架构, 性能优化 hooks',
+    '熟悉 Vue3, Pinia, vue-router, 了解 Vue3 响应式原理',
+    '熟悉 React, Zustand, react-router, 了解虚拟 DOM 和 diff 算法, 了解 Fiber 架构, 性能优化 hooks',
     '熟悉数据结构, 计算机网络, 设计模式',
     '熟悉 Git, 了解 CI/CD',
     '熟悉 Vite, 了解 Webpack',
@@ -201,23 +201,23 @@ export default defineComponent(() => {
         )}
       </BaseCard>
 
-      {/* 1. intendedJob 意向工作 */}
+      {/* 1. intendedJob 期望工作 */}
       <BaseCard
         header={dev.value ? <input v-model={headers[1]} placeholder={headers[1]} /> : headers[1]}
       >
         <ul class="ml-5 list-disc">
           <li class="flex gap-2">
-            <div>目标工作:</div>
+            <div>期望工作:</div>
             {dev.value ? (
-              <input v-model={targetJob.value} placeholder="目标工作" />
+              <input v-model={targetJob.value} placeholder="期望工作" />
             ) : (
               targetJob.value
             )}
           </li>
           <li class="flex gap-2">
-            <div>目标地点:</div>
+            <div>期望地点:</div>
             {dev.value ? (
-              <input v-model={targetAddress.value} placeholder="目标地点" />
+              <input v-model={targetAddress.value} placeholder="期望地点" />
             ) : (
               targetAddress.value
             )}
