@@ -1,36 +1,39 @@
-name: Deploy to GitHub Pages # name 工作流名
+name: Deploy to GitHub Pages # 工作流名
 
 on: # 触发工作流的 github 事件, 例如 push, pull_request 等
-  push: # push 操作时触发
-    tags: # 在指定 tag 上的操作, 才会触发工作流
+  push: # push 操作时, 触发工作流
+    tags: # 指定 tag 上的 push 操作, 才会触发工作流
       - 'v*.*.*' # 指定 tag
-# 例如在 tag v0.0.1 上的 push 操作, 才会触发工作流
+# 例如 git tag v0.0.1 && git push v0.0.1 时, 才会触发工作流
 
-jobs: # job 工作流中的作业
-  build-and-deploy: # 作业名 build-and-deploy
-    runs-on: ubuntu-latest # 指定操作系统
+jobs: # 工作流中的作业
+  build-and-deploy: # 作业名
+    runs-on: ubuntu-latest # 操作系统
 
-    steps: # step 作业中的步骤
-      - name: Checkout Repository # name 步骤名
-        uses: actions/checkout@v3 # 使用预定义的 actions/checkout 检出代码
+    steps: # 作业的步骤
+      - name: Checkout Repository # 步骤名
+        uses: actions/checkout@v4 # 使用预定义的 actions/checkout 动作 checkout 仓库
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3 # 使用预定义的 actions/setup-node 设置 Node.js 环境
+        uses: actions/setup-node@v4 # 使用预定义的 actions/setup-node 动作安装 Node.js
         with: # 动作的参数
           node-version: 22 # 指定 Node.js 版本
 
-      - name: Clear Cache
+      - name: Remove Old Dependencies
         run: | # 运行命令或脚本, | 表示多行命令
-          rm -rf node_modules # 删除 node_modules 目录。
+          rm -rf node_modules
 
       - name: Install Dependencies
-        run: npm install # 安装依赖
+        run: npm install
 
       - name: Build Project
-        run: npm run build # 构建项目
+        run: npm run build
+
+      - name: Create .nojekyll
+        run: touch ./dist/.nojekyll
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3 # 使用预定义的 peaceiris/actions-gh-pages 部署项目到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # 使用预定义的 peaceiris/actions-gh-pages 动作部署 GitHub Pages
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
